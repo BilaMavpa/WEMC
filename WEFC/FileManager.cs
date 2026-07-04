@@ -3,17 +3,17 @@ using System.IO;
 
 namespace WEFC;
 
-public class FileInfo
+public class FileManager
 {
-    private static FileInfo? _instance = null;
+    private static FileManager? _instance = null;
     private static readonly Lock Lock = new Lock();
     
-    private FileInfo()
+    private FileManager()
     {
         
     }
 
-    public static FileInfo Instance
+    public static FileManager Instance
     {
         get
         {
@@ -21,7 +21,7 @@ public class FileInfo
             {
                 if (_instance == null)
                 {
-                    _instance = new FileInfo();
+                    _instance = new FileManager();
                 }
                 return _instance;
             }
@@ -49,16 +49,16 @@ public class FileInfo
         lastPosition += 1;
         FilePath = fullFilePath[..lastPosition];
         FileName = fullFilePath[lastPosition..];
-        // Console.WriteLine("Path: " + FilePath);
-        // Console.WriteLine("Name: " + FileName);
 
-        // ConvertFile(".mp3", []);
     }
 
-    public bool ConvertFile(string outputFormat, string[] args)
+    public bool ConvertFile(string outputFormat, string[] args, string startTime, string duration)
     {
-        string arguments = $"-hwaccel cuda -i \"{fileName}\" " + string.Join(" ", args) + $"\"{Path.GetFileNameWithoutExtension(fileName) + outputFormat}\"";
         
+        string arguments = $"-hwaccel cuda {(!startTime.Equals("") ? startTime : "")} {(!duration.Equals("") ? duration : "")}" +
+                           $" -i \"{fileName}\" " + string.Join(" ", args) + 
+                           $" \"{Path.GetFileNameWithoutExtension(fileName) + outputFormat}\"";
+        Console.WriteLine("args: " + arguments);
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
             CreateNoWindow = false,
@@ -75,9 +75,6 @@ public class FileInfo
             process.Start();
             process.WaitForExit();
         }
-
-        // Console.WriteLine("Press any key to continue...");
-        // Console.ReadKey();
         
         return true;
     }

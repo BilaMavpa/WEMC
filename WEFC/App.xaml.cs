@@ -18,7 +18,7 @@ public partial class App
         {
             if (e.Args[i] == "-dir")
             {
-                FileInfo.Instance.SetFile(e.Args[i + 1]);
+                FileManager.Instance.SetFile(e.Args[i + 1]);
             }
         }
 

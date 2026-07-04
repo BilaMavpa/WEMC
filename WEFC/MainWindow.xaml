@@ -5,37 +5,114 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WEFC"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Convert File" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="55"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="95"></RowDefinition>
+            <RowDefinition Height="75"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         <Grid Grid.Row="0" Grid.ColumnSpan="3">
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <TextBlock Name="FilePath"  Text="Path: " HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="20"></TextBlock>
-            <TextBlock Name="FileName" Grid.Row="1"  Text="Name:" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="20"></TextBlock>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="FilePath"  Text="Path: " HorizontalAlignment="Center" VerticalAlignment="top" FontSize="20" TextWrapping="Wrap"></TextBlock>
+            <TextBlock Name="FileName" Grid.Column="1"  Text="Name:" HorizontalAlignment="Center" VerticalAlignment="top" FontSize="20" TextWrapping="Wrap"></TextBlock>
         </Grid>
         
-        <Grid Grid.Row="1" Column="1">
+        <Grid Grid.Row="1" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".625*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock  Text="Video format:" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="24"></TextBlock>
+            <TextBox Name="FormatInput" Grid.Column="1" FontSize="25" TextAlignment="Left" Text=".webm"></TextBox>
+        </Grid>
+        
+        <Grid Grid.Row="2" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".625*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock  Text="Resolution scale:" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"></TextBlock>
+            <TextBox Name="ScaleInput" Grid.Column="1" FontSize="25" TextAlignment="Left" Text="1" PreviewTextInput="PreviewNumberInput"></TextBox>
+        </Grid>
+        
+        <Grid Grid.Row="3" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".625*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock  Text="Video FPS:" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="25"></TextBlock>
+            <TextBox Name="FpsInput" Grid.Column="1" FontSize="25" TextAlignment="Left" Text="60" PreviewTextInput="PreviewNumberInput"></TextBox>
+        </Grid>
+        
+        <Grid Grid.Row="4" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".625*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <CheckBox VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Right" Checked="StartTimeToggle" Unchecked="StartTimeToggle">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                </CheckBox.LayoutTransform>
+                <TextBlock Text="Start time:" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"></TextBlock>
+            </CheckBox>
+            <TextBox Name="StartInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="00:00:00" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewTimeInput"></TextBox>
+        </Grid>
+        
+        <Grid Grid.Row="5" Grid.Column="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".625*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <CheckBox VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Right" Checked="DurationToggle" Unchecked="DurationToggle">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                </CheckBox.LayoutTransform>
+                <TextBlock Text="Duration:" Margin="8,0,3,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"></TextBlock>
+            </CheckBox>
+            <TextBox Name="DurationInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="00:00:00" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewTimeInput"></TextBox>
+        </Grid>
+        
+        <CheckBox Name="MergeAudioCheckbox" Grid.Row="1" Grid.Column="1" FontSize="20" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" IsChecked="False">
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+            </CheckBox.LayoutTransform>
+            <TextBlock Text="Merge audio tracks" VerticalAlignment="Center"></TextBlock>
+        </CheckBox>
+        
+        
+        <Grid Grid.Row="2" Grid.Column="1" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBlock  Text="Video format" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="40"></TextBlock>
-            <TextBox Name="FormatInput" Grid.Row="1" FontSize="40" TextAlignment="Center" Text="."></TextBox>
+            <TextBlock Grid.Row="0" Name="CompressionText" Text="Compression level: " FontSize="25" TextAlignment="Center"></TextBlock>
+            <Slider Grid.Row="1" Name="CompressionSlider" Margin="45,0" Value="6" Minimum="0" Maximum="12" IsSnapToTickEnabled="True" VerticalAlignment="Center" ValueChanged="CompressionSlider_OnValueChanged"></Slider>
         </Grid>
-        <Button Grid.Row="3" Grid.Column="1" FontSize="40" Content="Convert" Click="ConvertEvent"></Button>
+        
+        <Grid Grid.Row="4" Grid.Column="1" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Video codec: " FontSize="25" TextAlignment="Center"></TextBlock>
+            <TextBox Name="CodecInput" Grid.Row="1" FontSize="25" TextAlignment="Center" Text="libvpx-vp9"></TextBox>
+        </Grid>
+        
+        <Button Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="0" Width="200" FontSize="40" Content="Convert" Click="ConvertEvent"></Button>
     </Grid>
 </Window>
