@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace WEFC;
 
@@ -25,6 +26,7 @@ public partial class MainWindow : Window
 
         FilePath.Text = "Path: " + FileManager.Instance.filePath;
         FileName.Text = "Name: " + FileManager.Instance.fileName;
+        NameInput.Text = Path.GetFileNameWithoutExtension(FileManager.Instance.fileName);
     }
 
     private void ConvertEvent(object sender, RoutedEventArgs e)
@@ -49,7 +51,7 @@ public partial class MainWindow : Window
         
         args.Add($"-c:v {CodecInput.Text}");
         
-        if (FileManager.Instance.ConvertFile(FormatInput.Text,args.ToArray(),startTime, duration))
+        if (FileManager.Instance.ConvertFile(NameInput.Text,FormatInput.Text,args.ToArray(),startTime, duration))
         {
             Application.Current.Shutdown();
         }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WEFC"
         mc:Ignorable="d"
-        Title="Convert File" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Height="450" Width="800">
+        Title="Convert File" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="55"></RowDefinition>
@@ -15,6 +15,7 @@
             <RowDefinition Height="35"></RowDefinition>
             <RowDefinition Height="35"></RowDefinition>
             <RowDefinition Height="95"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
             <RowDefinition Height="75"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
         </Grid.RowDefinitions>
@@ -110,9 +111,18 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Video codec: " FontSize="25" TextAlignment="Center"></TextBlock>
-            <TextBox Name="CodecInput" Grid.Row="1" FontSize="25" TextAlignment="Center" Text="libvpx-vp9"></TextBox>
+            <TextBox Name="CodecInput" Grid.Row="1" Margin="50,0" FontSize="25" TextAlignment="Center" Text="libvpx-vp9"></TextBox>
         </Grid>
         
-        <Button Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="0" Width="200" FontSize="40" Content="Convert" Click="ConvertEvent"></Button>
+        <Grid Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Output name" TextAlignment="Center" FontSize="25" VerticalAlignment="Center"></TextBlock>
+            <TextBox Name="NameInput" Margin="125,0" Grid.Row="1" FontSize="25" TextAlignment="Center"></TextBox>
+        </Grid>
+        
+        <Button Grid.Row="8" Grid.ColumnSpan="2" Grid.Column="0" Width="200" FontSize="40" Content="Convert" Click="ConvertEvent"></Button>
     </Grid>
 </Window>

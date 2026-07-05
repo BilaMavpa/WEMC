@@ -52,12 +52,12 @@ public class FileManager
 
     }
 
-    public bool ConvertFile(string outputFormat, string[] args, string startTime, string duration)
+    public bool ConvertFile(string name,string outputFormat, string[] args, string startTime, string duration)
     {
         
         string arguments = $"-hwaccel cuda {(!startTime.Equals("") ? startTime : "")} {(!duration.Equals("") ? duration : "")}" +
                            $" -i \"{fileName}\" " + string.Join(" ", args) + 
-                           $" \"{Path.GetFileNameWithoutExtension(fileName) + outputFormat}\"";
+                           $" \"{name + outputFormat}\"";
         Console.WriteLine("args: " + arguments);
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
@@ -69,7 +69,7 @@ public class FileManager
             WorkingDirectory =  filePath
         };
         
-        using (var process = new Process())
+        using (Process process = new Process())
         {
             process.StartInfo = ffmpeg;
             process.Start();
