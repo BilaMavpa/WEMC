@@ -78,4 +78,30 @@ public class FileManager
         
         return true;
     }
+    
+    public bool ConvertFile(Preset preset)
+    {
+        
+        string arguments = $"-hwaccel cuda {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{fileName}\" " + string.Join(" ", preset.Args)+
+                           $" \"{Path.GetFileNameWithoutExtension(fileName) + preset.Format}\"";
+        Console.WriteLine("args: " + arguments);
+        ProcessStartInfo ffmpeg = new ProcessStartInfo
+        {
+            CreateNoWindow = false,
+            UseShellExecute = false,
+            FileName = @"ffmpeg\ffmpeg.exe",
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            WorkingDirectory =  filePath
+        };
+        
+        using (Process process = new Process())
+        {
+            process.StartInfo = ffmpeg;
+            process.Start();
+            process.WaitForExit();
+        }
+        
+        return true;
+    }
 }

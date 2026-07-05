@@ -1,5 +1,8 @@
 ﻿using System.Configuration;
 using System.Data;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Windows;
 
 namespace WEFC;
@@ -9,25 +12,37 @@ namespace WEFC;
 /// </summary>
 public partial class App
 {
-    void AppStartup(object sender, StartupEventArgs e)
+    private void AppStartup(object sender, StartupEventArgs e)
     {
-        // Application is running
+        string jsonText = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Presets.json"));
+        
+        List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(jsonText);
+
         // Process command line args
-        bool startMinimized = false;
         for (int i = 0; i != e.Args.Length; ++i)
         {
             if (e.Args[i] == "-dir")
             {
                 FileManager.Instance.SetFile(e.Args[i + 1]);
             }
+
+            if (e.Args[i] == "-p")
+            {
+                foreach (Preset preset in presets)
+                {
+                    if (preset.Name == e.Args[i + 1])
+                    {
+                        if (FileManager.Instance.ConvertFile(preset))
+                        {
+                            Current.Shutdown();
+                        }
+                    }
+                }
+            }
         }
 
-        // Create main application window, starting minimized if specified
         MainWindow mainWindow = new MainWindow();
-        if (startMinimized)
-        {
-            mainWindow.WindowState = WindowState.Minimized;
-        }
+
         mainWindow.Show();
         
     }

@@ -1,0 +1,14 @@
+﻿[{
+  "Name": "webp discord gif",
+  "Format": ".webp",
+  "FirstArg": "-framerate 1/2",
+  "Args": [
+    "-loop 0",
+    "-frames 2",
+    "-an",
+    "-vf \"scale=iw*1:ih*1, fps=fps=1\"",
+    "-compression_level 6",
+    "-vcodec libwebp"
+  ]
+}
+]
