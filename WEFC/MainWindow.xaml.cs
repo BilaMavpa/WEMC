@@ -20,6 +20,7 @@ public partial class MainWindow : Window
 {
     private bool _isStartTimeActive = false;
     private bool _isDurationActive = false;
+    private bool _isSizeActive = false;
     public MainWindow()
     {
         InitializeComponent();
@@ -46,12 +47,13 @@ public partial class MainWindow : Window
         {
             args.Add("-filter_complex \"[0:1][0:2]amerge=inputs=2[a]\" -ac 2 -map 0:v -map \"[a]\"");
         }
-        args.Add($"-vf \"scale=iw*{ScaleInput.Text}:ih*{ScaleInput.Text}, fps=fps={FpsInput.Text}\"");
-        args.Add($"-compression_level {CompressionSlider.Value}");
         
         args.Add($"-c:v {CodecInput.Text}");
         
-        if (FileManager.Instance.ConvertFile(NameInput.Text,FormatInput.Text,args.ToArray(),startTime, duration))
+        args.Add($"-vf \"fps=fps={FpsInput.Text}\"");
+        args.Add("-framerate " + FpsInput.Text);
+        if (FileManager.Instance.ConvertFile(NameInput.Text,FormatInput.Text,args.ToArray(),startTime,
+                duration, HwaccelComboBox.SelectedValue.ToString(),_isSizeActive ? float.Parse(SizeInput.Text) : -1))
         {
             Application.Current.Shutdown();
         }
@@ -88,6 +90,21 @@ public partial class MainWindow : Window
         _isDurationActive = !_isDurationActive;
     }
     
+    private void SizeToggle(object sender, RoutedEventArgs e)
+    {
+        if (_isSizeActive)
+        {
+            SizeInput.IsReadOnly = true;
+            SizeInput.Background = new SolidColorBrush(Colors.LightGray);
+        }
+        else
+        {
+            SizeInput.IsReadOnly = false;
+            SizeInput.Background = new SolidColorBrush(Colors.White);
+        }
+        _isSizeActive = !_isSizeActive;
+    }
+    
     private void PreviewNumberInput(object sender, TextCompositionEventArgs e)
     {
         Regex numberRegex = new Regex("[^0-9.]+");
@@ -100,8 +117,8 @@ public partial class MainWindow : Window
         e.Handled = timeRegex.IsMatch(e.Text);
     }
 
-    private void CompressionSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        CompressionText.Text = "Compression level: " + e.NewValue;
-    }
+    // private void CompressionSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    // {
+    //     CompressionText.Text = "Compression level: " + e.NewValue;
+    // }
 }
