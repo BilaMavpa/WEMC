@@ -79,13 +79,13 @@
                 <ColumnDefinition Width=".625*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Right" Checked="DurationToggle" Unchecked="DurationToggle">
+            <CheckBox Name="DurationCheckBox" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Right" Checked="DurationToggle" Unchecked="DurationToggle">
                 <CheckBox.LayoutTransform>
                     <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
                 </CheckBox.LayoutTransform>
                 <TextBlock Text="Duration:" Margin="8,0,3,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"></TextBlock>
             </CheckBox>
-            <TextBox Name="DurationInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="00:00:00" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewNumberInput"></TextBox>
+            <TextBox Name="DurationInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="00:00:00" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewTimeInput"></TextBox>
         </Grid>
         
         <Grid Grid.Row="5" Grid.Column="0" Margin="2">
@@ -99,7 +99,7 @@
                 </CheckBox.LayoutTransform>
                 <TextBlock Text="Target size(Mb):" Margin="8,0,1,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12"></TextBlock>
             </CheckBox>
-            <TextBox Name="SizeInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="10" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewTimeInput"></TextBox>
+            <TextBox Name="SizeInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="10" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewNumberInput"></TextBox>
         </Grid>
         
         <Grid Grid.Row="4" Grid.Column="1" Margin="50,5,50,0">

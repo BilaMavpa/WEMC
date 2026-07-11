@@ -52,24 +52,19 @@ public class FileManager
 
     }
 
-    public bool ConvertFile(string name,string outputFormat, string[] args, string startTime, string duration,string hwaccel, float size)
+    public bool ConvertFile(ConversionArgs ca)
     {
-
-        string arguments = "";
-        if (size == -1)
-        {
-            arguments = $"{(!hwaccel.Equals("none") ? "-hwaccel " + hwaccel : "")} {(!startTime.Equals("") ? startTime : "")} {(!duration.Equals("") ? duration : "")}" +
-                               $" -i \"{fileName}\" " + string.Join(" ", args) + 
-                               $" \"{name + outputFormat}\"";
-        }
-        else
-        {
-            double bitrate = (size * 8192) / TimeSpan.Parse(duration.Substring(4,8)).TotalSeconds - 128;
-            arguments = $"{(!hwaccel.Equals("none") ? "-hwaccel " + hwaccel : "")} {(!startTime.Equals("") ? startTime : "")} {(!duration.Equals("") ? duration : "")}" +
-                        $" -i \"{fileName}\" " + string.Join(" ", args) + 
-                        $" -b:a 48k -b:v {bitrate}k \"{name + outputFormat}\"";
-        }
+        
+        string arguments = $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
+            $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
+            $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
+            $"-i \"{fileName}\" " + string.Join(" ", ca.Args) +
+            $"{(ca.UseSize ? " -b:a 48k -b:v " + 
+            ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
+            $" \"{ca.Name + ca.OutputFormat}\"";
+        
         Console.WriteLine("args: " + arguments);
+        
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
             CreateNoWindow = false,
@@ -115,4 +110,6 @@ public class FileManager
         
         return true;
     }
+    
+    
 }

@@ -32,16 +32,17 @@ public partial class MainWindow : Window
 
     private void ConvertEvent(object sender, RoutedEventArgs e)
     {
+        ConversionArgs ca = new ConversionArgs();
         List<string> args = new List<string>();
-        string startTime = "";
-        string duration = "";
+        ca.StartTime = "";
+        ca.Duration = "";
         if (_isStartTimeActive)
         {
-            startTime = ($"-ss \"{StartInput.Text}\"");
+            ca.StartTime = StartInput.Text;
         }
         if (_isDurationActive)
         {
-            duration = ($"-t \"{DurationInput.Text}\"");
+            ca.Duration = DurationInput.Text;
         }
         if ((bool)MergeAudioCheckbox.IsChecked!)
         {
@@ -51,9 +52,13 @@ public partial class MainWindow : Window
         args.Add($"-c:v {CodecInput.Text}");
         
         args.Add($"-vf \"fps=fps={FpsInput.Text}\"");
-        args.Add("-framerate " + FpsInput.Text);
-        if (FileManager.Instance.ConvertFile(NameInput.Text,FormatInput.Text,args.ToArray(),startTime,
-                duration, HwaccelComboBox.SelectedValue.ToString(),_isSizeActive ? float.Parse(SizeInput.Text) : -1))
+        ca.Args = args.ToArray();
+        ca.Name = NameInput.Text;
+        ca.OutputFormat = FormatInput.Text;
+        ca.Hwaccel = HwaccelComboBox.SelectedValue.ToString();
+        ca.UseSize = _isSizeActive;
+        ca.Size = float.Parse(SizeInput.Text);
+        if (FileManager.Instance.ConvertFile(ca))
         {
             Application.Current.Shutdown();
         }
@@ -102,6 +107,7 @@ public partial class MainWindow : Window
             SizeInput.IsReadOnly = false;
             SizeInput.Background = new SolidColorBrush(Colors.White);
         }
+        DurationCheckBox.IsChecked = true;
         _isSizeActive = !_isSizeActive;
     }
     
