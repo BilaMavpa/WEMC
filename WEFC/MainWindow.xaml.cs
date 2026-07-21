@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,13 +23,18 @@ public partial class MainWindow : Window
     private bool _isStartTimeActive = false;
     private bool _isDurationActive = false;
     private bool _isSizeActive = false;
+    
+    private readonly string _ffprobePath = Environment.GetEnvironmentVariable("PATH")
+        ?.Split(Path.PathSeparator)
+        .Select(dir => Path.Combine(dir, "ffprobe.exe"))
+        .FirstOrDefault(File.Exists);
     public MainWindow()
     {
         InitializeComponent();
 
-        FilePath.Text = "Path: " + FileManager.Instance.filePath;
-        FileName.Text = "Name: " + FileManager.Instance.fileName;
-        NameInput.Text = Path.GetFileNameWithoutExtension(FileManager.Instance.fileName);
+        FilePath.Text = "Path: " + ConversionManager.Instance.FilePath;
+        FileName.Text = "Name: " + ConversionManager.Instance.FileName;
+        NameInput.Text = Path.GetFileNameWithoutExtension(ConversionManager.Instance.FileName);
     }
 
     private void ConvertEvent(object sender, RoutedEventArgs e)
@@ -58,7 +65,7 @@ public partial class MainWindow : Window
         ca.Hwaccel = HwaccelComboBox.SelectedValue.ToString();
         ca.UseSize = _isSizeActive;
         ca.Size = float.Parse(SizeInput.Text);
-        if (FileManager.Instance.ConvertFile(ca))
+        if (ConversionManager.Instance.ConvertFile(ca))
         {
             Application.Current.Shutdown();
         }
@@ -106,8 +113,32 @@ public partial class MainWindow : Window
         {
             SizeInput.IsReadOnly = false;
             SizeInput.Background = new SolidColorBrush(Colors.White);
+            DurationCheckBox.IsChecked = true;
         }
-        DurationCheckBox.IsChecked = true;
+        
+        
+        if (DurationInput.Text.Equals("00:00:00"))
+        {
+            string fileDuration;
+            ProcessStartInfo ffmpeg = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = _ffprobePath,
+                Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal \"{ConversionManager.Instance.FileName}\"",
+                RedirectStandardOutput = true,
+                WorkingDirectory = ConversionManager.Instance.FilePath
+            };
+            
+            using (Process process = new Process())
+            {
+                process.StartInfo = ffmpeg;
+                process.Start();
+                fileDuration = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+            }
+            DurationInput.Text =  "0" + fileDuration[..7];
+        }
         _isSizeActive = !_isSizeActive;
     }
     

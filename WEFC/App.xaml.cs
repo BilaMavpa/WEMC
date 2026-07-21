@@ -23,7 +23,7 @@ public partial class App
         {
             if (e.Args[i] == "-dir")
             {
-                FileManager.Instance.SetFile(e.Args[i + 1]);
+                ConversionManager.Instance.SetFile(e.Args[i + 1]);
             }
 
             if (e.Args[i] == "-p")
@@ -32,7 +32,7 @@ public partial class App
                 {
                     if (preset.Name == e.Args[i + 1])
                     {
-                        if (FileManager.Instance.ConvertFile(preset))
+                        if (ConversionManager.Instance.ConvertFile(preset))
                         {
                             Current.Shutdown();
                         }

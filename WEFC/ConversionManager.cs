@@ -3,17 +3,17 @@ using System.IO;
 
 namespace WEFC;
 
-public class FileManager
+public class ConversionManager
 {
-    private static FileManager? _instance = null;
+    private static ConversionManager? _instance = null;
     private static readonly Lock Lock = new Lock();
     
-    private FileManager()
+    private ConversionManager()
     {
         
     }
 
-    public static FileManager Instance
+    public static ConversionManager Instance
     {
         get
         {
@@ -21,18 +21,23 @@ public class FileManager
             {
                 if (_instance == null)
                 {
-                    _instance = new FileManager();
+                    _instance = new ConversionManager();
                 }
                 return _instance;
             }
         }
     }
     
-    private string FilePath { get; set; }
-    private string FileName { get; set; }
+    private string filePath { get; set; }
+    private string fileName { get; set; }
+
+    private readonly string _ffmpegPath = Environment.GetEnvironmentVariable("PATH")
+        ?.Split(Path.PathSeparator)
+        .Select(dir => Path.Combine(dir, "ffmpeg.exe"))
+        .FirstOrDefault(File.Exists);
     
-    public string filePath => FilePath;
-    public string fileName => FileName;
+    public string FilePath => filePath;
+    public string FileName => fileName;
 
     public void SetFile(string fullFilePath)
     {
@@ -47,8 +52,8 @@ public class FileManager
         }
 
         lastPosition += 1;
-        FilePath = fullFilePath[..lastPosition];
-        FileName = fullFilePath[lastPosition..];
+        filePath = fullFilePath[..lastPosition];
+        fileName = fullFilePath[lastPosition..];
 
     }
 
@@ -58,7 +63,7 @@ public class FileManager
         string arguments = $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
             $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
             $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
-            $"-i \"{fileName}\" " + string.Join(" ", ca.Args) +
+            $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
             $"{(ca.UseSize ? " -b:a 48k -b:v " + 
             ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
             $" \"{ca.Name + ca.OutputFormat}\"";
@@ -69,10 +74,10 @@ public class FileManager
         {
             CreateNoWindow = false,
             UseShellExecute = false,
-            FileName = @"ffmpeg\ffmpeg.exe",
+            FileName = _ffmpegPath,
             Arguments = arguments,
             RedirectStandardOutput = true,
-            WorkingDirectory =  filePath
+            WorkingDirectory =  FilePath
         };
         
         using (Process process = new Process())
@@ -88,17 +93,18 @@ public class FileManager
     public bool ConvertFile(Preset preset)
     {
         
-        string arguments = $"-hwaccel cuda {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{fileName}\" " + string.Join(" ", preset.Args)+
-                           $" \"{Path.GetFileNameWithoutExtension(fileName) + preset.Format}\"";
+        string arguments = $"-hwaccel cuda {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " + string.Join(" ", preset.Args)+
+                           $" \"{Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         Console.WriteLine("args: " + arguments);
+        
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
             CreateNoWindow = false,
             UseShellExecute = false,
-            FileName = @"ffmpeg\ffmpeg.exe",
+            FileName = _ffmpegPath,
             Arguments = arguments,
             RedirectStandardOutput = true,
-            WorkingDirectory =  filePath
+            WorkingDirectory =  FilePath
         };
         
         using (Process process = new Process())
