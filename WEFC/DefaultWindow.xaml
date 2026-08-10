@@ -1,0 +1,26 @@
+﻿<Window x:Class="WEFC.DefaultWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:WEFC"
+        mc:Ignorable="d"
+        Title="WEFC" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Name="TextBlock" Text="DefaultWindow" FontSize="20" TextAlignment="Center" VerticalAlignment="Bottom"></TextBlock>
+        <Button Name="ApplyRegistryButton" Grid.Row="1" Width="300" FontSize="40" Content="Apply Registry" VerticalAlignment="Center" Click="ApplyButtonAction"  IsEnabled="False"></Button>
+        <Button Name="ApplyPresetsButton" Grid.Row="2" Width="300" FontSize="40" Content="Apply Presets" VerticalAlignment="Center" Click="ApplyPresetsButtonAction" IsEnabled="False"></Button>
+        <Button Name="RemoveRegistryButton" Grid.Row="3" Width="300" FontSize="40" Content="Remove Registry" VerticalAlignment="Center" Click="RemoveButtonAction" IsEnabled="False"></Button>
+
+    </Grid>
+</Window>

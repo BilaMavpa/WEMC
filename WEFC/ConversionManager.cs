@@ -59,7 +59,7 @@ public class ConversionManager
 
     public bool ConvertFile(ConversionArgs ca)
     {
-        
+        Console.WriteLine(_ffmpegPath);
         string arguments = $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
             $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
             $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
@@ -93,8 +93,8 @@ public class ConversionManager
     public bool ConvertFile(Preset preset)
     {
         
-        string arguments = $"-hwaccel cuda {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " + string.Join(" ", preset.Args)+
-                           $" \"{Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
+        string arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")} {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " + string.Join(" ", preset.Args)+
+                           $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         Console.WriteLine("args: " + arguments);
         
         ProcessStartInfo ffmpeg = new ProcessStartInfo

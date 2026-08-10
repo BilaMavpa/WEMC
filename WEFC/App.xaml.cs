@@ -40,11 +40,17 @@ public partial class App
                 }
             }
         }
-
-        MainWindow mainWindow = new MainWindow();
-
-        mainWindow.Show();
         
+        if (e.Args.Length > 0)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+        else
+        {
+            DefaultWindow defaultWindow = new DefaultWindow();
+            defaultWindow.Show();
+        }
     }
 
     

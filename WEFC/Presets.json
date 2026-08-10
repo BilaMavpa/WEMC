@@ -1,6 +1,7 @@
 ﻿[{
   "Name": "webp discord gif",
   "Format": ".webp",
+  "Hwaccel": "cuda",
   "FirstArg": "-framerate 1/2",
   "Args": [
     "-loop 0",
@@ -10,5 +11,15 @@
     "-compression_level 6",
     "-vcodec libwebp"
   ]
-}
-]
+},
+{
+  "Name": "mp4 h264",
+  "Format": ".mp4",
+  "Hwaccel": "cuda",
+  "FirstArg": "",
+  "Args": [
+    "-c:v h264_nvenc",
+    "-b:v 10M",
+    "-map 0:v -map 0:a:0 -map 0:a:1"
+  ]
+}]
