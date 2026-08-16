@@ -46,7 +46,47 @@ public partial class MainWindow : Window
         }
         if ((bool)MergeAudioCheckbox.IsChecked!)
         {
-            args.Add("-filter_complex \"[0:1][0:2]amerge=inputs=2[a]\" -ac 2 -map 0:v -map \"[a]\"");
+            switch (AudioComboBox.SelectedValue.ToString())
+            {
+                case "1 + 2":
+                    args.Add("-filter_complex \"[0:1][0:2]amerge=inputs=2[a]\" -ac 2 -map 0:v -map \"[a]\""); 
+                    break;
+                case "All":
+                    string tracks = "";
+                    ProcessStartInfo ffmpeg = new ProcessStartInfo
+                    {
+                        CreateNoWindow = false,
+                        UseShellExecute = false,
+                        FileName = _ffprobePath,
+                        Arguments = $"-v error -select_streams a -show_entries stream=index -of csv=p=0 \"{ConversionManager.Instance.FileName}\"",
+                        RedirectStandardOutput = true,
+                        WorkingDirectory = ConversionManager.Instance.FilePath
+                    };
+            
+                    using (Process process = new Process())
+                    {
+                        process.StartInfo = ffmpeg;
+                        process.Start();
+                        tracks = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                    }
+                    int amount = tracks.Count(char.IsDigit);
+                    
+                    if (amount == 0)
+                    {
+                        break;
+                    }
+
+                    string arg = "-filter_complex \"";
+                    for (int i = 1; i < amount+1; i++)
+                    {
+                        arg += $"[0:{i}]";
+                    }
+                    
+                    arg += $"amerge=inputs={amount}[a]\" -ac 2 -map 0:v -map \"[a]\"";
+                    args.Add(arg);
+                    break;
+            }
         }
         
         args.Add($"-c:v {CodecInput.Text}");
@@ -147,8 +187,4 @@ public partial class MainWindow : Window
         e.Handled = timeRegex.IsMatch(e.Text);
     }
 
-    // private void CompressionSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    // {
-    //     CompressionText.Text = "Compression level: " + e.NewValue;
-    // }
 }

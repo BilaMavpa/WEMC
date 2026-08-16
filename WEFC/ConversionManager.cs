@@ -64,7 +64,8 @@ public class ConversionManager
             $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
             $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
             $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
-            $"{(ca.UseSize ? " -b:a 48k -b:v " + 
+            " -b:a 48k " +
+            $"{(ca.UseSize ? " -b:v " +
             ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
             $" \"{ca.Name + ca.OutputFormat}\"";
         

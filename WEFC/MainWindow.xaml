@@ -104,19 +104,27 @@
         
         <Grid Grid.Row="4" Grid.Column="1" Margin="50,5,50,0">
             <Grid.Resources>
-                <local:HwaccelOptions x:Key="options"/>
+                <local:HwaccelOptions x:Key="Options"/>
             </Grid.Resources>
             <TextBlock  Text="hwaccel:" Margin="0,0,3,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="25"></TextBlock>
             <ComboBox Name="HwaccelComboBox" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center"
-                      Text="qsv" SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource options}"></ComboBox>
+                      Text="qsv" SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource Options}"></ComboBox>
         </Grid>
         
-        <CheckBox Name="MergeAudioCheckbox" Grid.Row="1" Grid.Column="1" FontSize="20" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" IsChecked="False">
-            <CheckBox.LayoutTransform>
-                <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
-            </CheckBox.LayoutTransform>
-            <TextBlock Text="Merge audio tracks" VerticalAlignment="Center"></TextBlock>
-        </CheckBox>
+        <Grid Grid.Row="1" Grid.Column="1" Margin="50,0,35,0">
+            <Grid.Resources>
+                <local:AudioTracksOptions x:Key="TrackOptions"/>
+            </Grid.Resources>
+            
+            <CheckBox Grid.Column="0" Name="MergeAudioCheckbox"  FontSize="19" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="False">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
+                </CheckBox.LayoutTransform>
+                <TextBlock Text="Merge audio tracks" VerticalAlignment="Center"></TextBlock>
+            </CheckBox>
+            <ComboBox Name="AudioComboBox" Width="75" Margin="50,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Text="1 + 2" SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource TrackOptions}"></ComboBox>
+        </Grid>
         
         
         <!-- <Grid Grid.Row="2" Grid.Column="1" Grid.RowSpan="2"> -->

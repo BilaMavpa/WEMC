@@ -13,7 +13,7 @@
             <RowDefinition Height="0.2*"></RowDefinition>
             <RowDefinition Height="0.05*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" Name="TextBlock" Text="Alert text " TextAlignment="Center" VerticalAlignment="Top" FontSize="20" TextWrapping="Wrap"></TextBlock>
+        <TextBlock Grid.Row="1" Name="TextBlock" Text="Alert text" TextAlignment="Center" VerticalAlignment="Top" FontSize="20" TextWrapping="Wrap"></TextBlock>
         <Button Grid.Row="2" Width="125" Content="Close" FontSize="25" Click="CloseWindow"></Button>
     </Grid>
 </Window>
