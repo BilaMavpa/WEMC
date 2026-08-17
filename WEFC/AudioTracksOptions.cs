@@ -6,7 +6,9 @@ public class AudioTracksOptions : ObservableCollection<string>
 {
     public AudioTracksOptions()
     {
-        Add("1 + 2");
-        Add("All");
+        Add("Keep same");
+        Add("Only Keep 1");
+        Add("Merge 1 + 2");
+        Add("Merge all");
     }
 }

@@ -42,15 +42,6 @@
             <TextBox Name="FormatInput" Grid.Column="1" FontSize="25" TextAlignment="Left" Text=".webm"></TextBox>
         </Grid>
         
-        <!-- <Grid Grid.Row="2" Grid.Column="0" Margin="2"> -->
-        <!--     <Grid.ColumnDefinitions> -->
-        <!--         <ColumnDefinition Width=".625*"></ColumnDefinition> -->
-        <!--         <ColumnDefinition></ColumnDefinition> -->
-        <!--     </Grid.ColumnDefinitions> -->
-        <!--     <TextBlock  Text="Resolution scale:" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="20"></TextBlock> -->
-        <!--     <TextBox Name="ScaleInput" Grid.Column="1" FontSize="25" TextAlignment="Left" Text="1" PreviewTextInput="PreviewNumberInput"></TextBox> -->
-        <!-- </Grid> -->
-        
         <Grid Grid.Row="2" Grid.Column="0" Margin="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".625*"></ColumnDefinition>
@@ -102,41 +93,25 @@
             <TextBox Name="SizeInput" Grid.Column="1" MaxLength="8" FontSize="25" TextAlignment="Left" Text="10" IsReadOnly="True" Background="LightGray" PreviewTextInput="PreviewNumberInput"></TextBox>
         </Grid>
         
-        <Grid Grid.Row="4" Grid.Column="1" Margin="50,5,50,0">
+        <Grid Grid.Row="2" Grid.Column="1" Margin="50,5,50,0">
             <Grid.Resources>
                 <local:HwaccelOptions x:Key="Options"/>
             </Grid.Resources>
             <TextBlock  Text="hwaccel:" Margin="0,0,3,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="25"></TextBlock>
             <ComboBox Name="HwaccelComboBox" Width="200" HorizontalAlignment="Right" VerticalAlignment="Center"
-                      Text="qsv" SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource Options}"></ComboBox>
+                       SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource Options}"></ComboBox>
         </Grid>
         
-        <Grid Grid.Row="1" Grid.Column="1" Margin="50,0,35,0">
+        <Grid Grid.Row="1" Grid.Column="1" Margin="50,5,50,0">
             <Grid.Resources>
-                <local:AudioTracksOptions x:Key="TrackOptions"/>
+                <local:AudioTracksOptions x:Key="Options"/>
             </Grid.Resources>
-            
-            <CheckBox Grid.Column="0" Name="MergeAudioCheckbox"  FontSize="19" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" IsChecked="False">
-                <CheckBox.LayoutTransform>
-                    <ScaleTransform ScaleX="1.25" ScaleY="1.25"/>
-                </CheckBox.LayoutTransform>
-                <TextBlock Text="Merge audio tracks" VerticalAlignment="Center"></TextBlock>
-            </CheckBox>
-            <ComboBox Name="AudioComboBox" Width="75" Margin="50,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center"
-                      Text="1 + 2" SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource TrackOptions}"></ComboBox>
+            <TextBlock  Text="Audio tracks:" Margin="0,0,3,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="25"></TextBlock>
+            <ComboBox Name="AudioComboBox" Width="150" HorizontalAlignment="Right" VerticalAlignment="Center"
+                       SelectedIndex="0" FontSize="17" VerticalContentAlignment="Center" ItemsSource="{StaticResource Options}"></ComboBox>
         </Grid>
         
-        
-        <!-- <Grid Grid.Row="2" Grid.Column="1" Grid.RowSpan="2"> -->
-        <!--     <Grid.RowDefinitions> -->
-        <!--         <RowDefinition></RowDefinition> -->
-        <!--         <RowDefinition></RowDefinition> -->
-        <!--     </Grid.RowDefinitions> -->
-        <!--     <TextBlock Grid.Row="0" Name="CompressionText" Text="Compression level: " FontSize="25" TextAlignment="Center"></TextBlock> -->
-        <!--     <Slider Grid.Row="1" Name="CompressionSlider" Margin="45,0" Value="6" Minimum="0" Maximum="12" IsSnapToTickEnabled="True" VerticalAlignment="Center" ValueChanged="CompressionSlider_OnValueChanged"></Slider> -->
-        <!-- </Grid> -->
-        
-        <Grid Grid.Row="2" Grid.Column="1" Grid.RowSpan="2">
+        <Grid Grid.Row="3" Grid.Column="1" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>

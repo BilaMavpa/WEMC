@@ -28,6 +28,10 @@ public class ConversionManager
         }
     }
     
+    private readonly string _ffprobePath = Environment.GetEnvironmentVariable("PATH")
+        ?.Split(Path.PathSeparator)
+        .Select(dir => Path.Combine(dir, "ffprobe.exe"))
+        .FirstOrDefault(File.Exists);
     private string filePath { get; set; }
     private string fileName { get; set; }
 
@@ -93,11 +97,21 @@ public class ConversionManager
     
     public bool ConvertFile(Preset preset)
     {
+        string arguments;
         
-        string arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")} {(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " + string.Join(" ", preset.Args)+
-                           $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
+        if (preset.Name.Equals("merge all audio"))
+        {
+            arguments = $"-i \"{FileName}\" " + GetArgsForMergingAllAudio() + " -c:v copy -b:a 48k \"converted " + fileName + "\"";
+        }
+        else
+        {
+            arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")}" +
+                               $"{(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " +
+                               string.Join(" ", preset.Args) +
+                               $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
+        }
         Console.WriteLine("args: " + arguments);
-        
+            
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
             CreateNoWindow = false,
@@ -107,16 +121,74 @@ public class ConversionManager
             RedirectStandardOutput = true,
             WorkingDirectory =  FilePath
         };
-        
+            
         using (Process process = new Process())
         {
             process.StartInfo = ffmpeg;
             process.Start();
             process.WaitForExit();
         }
-        
+            
         return true;
     }
-    
+
+    private int GetAudioTrackAmount()
+    {
+        string tracks;
+        ProcessStartInfo ffprobe = new ProcessStartInfo
+        {
+            CreateNoWindow = false,
+            UseShellExecute = false,
+            FileName = _ffprobePath,
+            Arguments = $"-v error -select_streams a -show_entries stream=index -of csv=p=0 \"{FileName}\"",
+            RedirectStandardOutput = true,
+            WorkingDirectory = FilePath
+        };
+            
+        using (Process process = new Process())
+        {
+            process.StartInfo = ffprobe;
+            process.Start();
+            tracks = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+        }
+        return tracks.Count(char.IsDigit);
+    }
+
+    public string GetArgsForMergingAllAudio()
+    {
+        int amount = GetAudioTrackAmount();
+                    
+        if (amount == 0)
+        {
+            throw new Exception("no audio present");
+        }
+
+        string args = "-filter_complex \"";
+        for (int i = 1; i < amount+1; i++)
+        {
+            args += $"[0:{i}]";
+        }
+                    
+        args += $"amerge=inputs={amount}[a]\" -ac 2 -map 0:v -map \"[a]\"";
+        return args;
+    }
+
+    public string GetArgsForKeepingAllAudio()
+    {
+        int amount = GetAudioTrackAmount();
+        
+        if (amount == 0)
+        {
+            throw new Exception("no audio present");
+        }
+        
+        string args = "-map 0:0";
+        for (int i = 1; i < amount+1; i++)
+        {
+            args += $" -map 0:{i}";
+        }
+        return args;
+    }
     
 }
