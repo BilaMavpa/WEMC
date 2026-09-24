@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Windows;
 using Microsoft.Win32;
 
-namespace WEFC;
+namespace WEMC;
 
 public partial class DefaultWindow : Window
 {
@@ -50,7 +50,7 @@ public partial class DefaultWindow : Window
     private void RemoveRegistry()
     {
         RegistryKey rootKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell", true);
-        rootKey.DeleteSubKeyTree("FileConverter");
+        rootKey.DeleteSubKeyTree("WEMC");
         rootKey.Close();
         
         Alert alert = new Alert("Success","Registry entries successfully removed");
@@ -59,25 +59,25 @@ public partial class DefaultWindow : Window
     private void ApplyRegistry()
     {
         RegistryKey rootKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell", true);
-        rootKey.CreateSubKey("FileConverter");
+        rootKey.CreateSubKey("WEMC");
         rootKey.Close();
         
-        RegistryKey appKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter", true);
-        appKey.SetValue("MUIVerb","File Converter");
+        RegistryKey appKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC", true);
+        appKey.SetValue("MUIVerb","Media Converter");
         appKey.SetValue("SubCommands","");
         appKey.CreateSubKey("shell");
         appKey.Close();
         
-        RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell", true);
+        RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell", true);
         shellKey.CreateSubKey("mainAction");
         shellKey.Close();
         
-        RegistryKey mainActionKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\mainAction", true);
+        RegistryKey mainActionKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction", true);
         mainActionKey.SetValue("","Convert File");
         mainActionKey.CreateSubKey("command");
         mainActionKey.Close();
         
-        RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\mainAction\command", true);
+        RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction\command", true);
         mainActionCommandKey.SetValue("", $"\"{System.Environment.ProcessPath}\" -dir \"%1\"");
         
         Alert alert = new Alert("Success","Registry entries successfully created");
@@ -89,31 +89,31 @@ public partial class DefaultWindow : Window
         
         List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(jsonText);
         
-        RegistryKey appKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter", true);
+        RegistryKey appKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC", true);
         appKey.DeleteSubKeyTree("shell");
         appKey.CreateSubKey("shell");
         appKey.Close();
         
-        RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell", true);
+        RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell", true);
         shellKey.CreateSubKey("mainAction");
         foreach (Preset preset in presets)
         {
             shellKey.CreateSubKey(preset.Name);
-            RegistryKey presetKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\" + preset.Name, true);
+            RegistryKey presetKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\" + preset.Name, true);
             presetKey.SetValue("", "Convert to " + preset.Name);
             presetKey.CreateSubKey("command");
             presetKey.Close();
-            RegistryKey presetCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\" + preset.Name + @"\command", true);
+            RegistryKey presetCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\" + preset.Name + @"\command", true);
             presetCommandKey.SetValue("", $"\"{System.Environment.ProcessPath}\" -dir \"%1\" -p \"{preset.Name}\"");
         }
         shellKey.Close();
         
-        RegistryKey mainActionKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\mainAction", true);
+        RegistryKey mainActionKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction", true);
         mainActionKey.SetValue("","Convert File");
         mainActionKey.CreateSubKey("command");
         mainActionKey.Close();
         
-        RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\FileConverter\shell\mainAction\command", true);
+        RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction\command", true);
         mainActionCommandKey.SetValue("", $"\"{System.Environment.ProcessPath}\" -dir \"%1\"");
         
         Alert alert = new Alert("Success","Registry entries for presets successfully created");

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace WEFC;
+namespace WEMC;
 
 public class AudioTracksOptions : ObservableCollection<string>
 {
@@ -10,5 +10,6 @@ public class AudioTracksOptions : ObservableCollection<string>
         Add("Only Keep 1");
         Add("Merge 1 + 2");
         Add("Merge all");
+        Add("None");
     }
 }

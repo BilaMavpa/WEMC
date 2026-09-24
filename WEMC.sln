@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEFC", "WEFC\WEFC.csproj", "{D4BB1135-D3AA-4FF3-ACB6-D93D6344590F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEMC", "WEMC\WEMC.csproj", "{D4BB1135-D3AA-4FF3-ACB6-D93D6344590F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

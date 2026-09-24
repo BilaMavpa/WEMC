@@ -4,8 +4,9 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
+using System.Windows.Threading;
 
-namespace WEFC;
+namespace WEMC;
 
 /// <summary>
 /// Interaction logic for App.xaml

@@ -1,4 +1,4 @@
-﻿namespace WEFC;
+﻿namespace WEMC;
 
 public class Preset
 {

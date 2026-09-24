@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Path = System.IO.Path;
 
-namespace WEFC;
+namespace WEMC;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -56,6 +56,9 @@ public partial class MainWindow : Window
                 break;
             case "Keep same":
                 args.Add(ConversionManager.Instance.GetArgsForKeepingAllAudio());
+                break;
+            case "None":
+                args.Add("-an");
                 break;
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace WEFC;
+namespace WEMC;
 
 public class HwaccelOptions : ObservableCollection<string>
 {

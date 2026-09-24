@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Windows.Threading;
 
-namespace WEFC;
+namespace WEMC;
 
 public class ConversionManager
 {
@@ -101,7 +102,7 @@ public class ConversionManager
         
         if (preset.Name.Equals("merge all audio"))
         {
-            arguments = $"-i \"{FileName}\" " + GetArgsForMergingAllAudio() + " -c:v copy -b:a 48k \"converted " + fileName + "\"";
+            arguments = $"-i \"{FileName}\" " + GetArgsForMergingAllAudio() + " -c:v copy \"converted " + fileName + "\"";
         }
         else
         {

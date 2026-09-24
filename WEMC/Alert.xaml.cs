@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WEFC;
+namespace WEMC;
 
 public partial class Alert : Window
 {
