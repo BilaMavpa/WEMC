@@ -17,10 +17,6 @@ public partial class MainWindow : Window
     private bool _isDurationActive = false;
     private bool _isSizeActive = false;
     
-    private readonly string _ffprobePath = Environment.GetEnvironmentVariable("PATH")
-        ?.Split(Path.PathSeparator)
-        .Select(dir => Path.Combine(dir, "ffprobe.exe"))
-        .FirstOrDefault(File.Exists);
     public MainWindow()
     {
         InitializeComponent();
@@ -76,16 +72,17 @@ public partial class MainWindow : Window
         conversionWindow.Show();
         IProgress<String> progress = new Progress<String>(message =>
         {
-            conversionWindow.updateProgress(message);
+            conversionWindow.updateProgress(message,
+                _isDurationActive ? DurationInput.Text : ConversionManager.Instance.GetDuration());
         });
 
         bool completionStatus = false;
-
+        Hide();
         try
         {
             await Task.Run(() =>
-                completionStatus = ConversionManager.Instance.ConvertFile(ca, progress,
-                    ConversionManager.Instance.CancellationTokenSource.Token));
+                completionStatus = ConversionManager.Instance.ConvertFile(ConversionManager.Instance.CreateArgs(ca),
+                    progress, ConversionManager.Instance.CancellationTokenSource.Token));
         }
         catch (OperationCanceledException exception)
         {
@@ -105,6 +102,10 @@ public partial class MainWindow : Window
         if (completionStatus)
         {
             Application.Current.Shutdown();
+        }
+        else
+        {
+            Show();
         }
         
     }
@@ -156,25 +157,7 @@ public partial class MainWindow : Window
         
         if (DurationInput.Text.Equals("00:00:00"))
         {
-            string fileDuration;
-            ProcessStartInfo ffprobe = new ProcessStartInfo
-            {
-                CreateNoWindow = false,
-                UseShellExecute = false,
-                FileName = _ffprobePath,
-                Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal \"{ConversionManager.Instance.FileName}\"",
-                RedirectStandardOutput = true,
-                WorkingDirectory = ConversionManager.Instance.FilePath
-            };
-            
-            using (Process process = new Process())
-            {
-                process.StartInfo = ffprobe;
-                process.Start();
-                fileDuration = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-            }
-            DurationInput.Text =  "0" + fileDuration[..7];
+            DurationInput.Text = ConversionManager.Instance.GetDuration();
         }
         _isSizeActive = !_isSizeActive;
     }

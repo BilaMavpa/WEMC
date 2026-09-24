@@ -15,10 +15,7 @@ public partial class App
 {
     private void AppStartup(object sender, StartupEventArgs e)
     {
-        string jsonText = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Presets.json"));
-        
-        List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(jsonText);
-
+        bool presetDetected = false;
         // Process command line args
         for (int i = 0; i != e.Args.Length; ++i)
         {
@@ -29,19 +26,14 @@ public partial class App
 
             if (e.Args[i] == "-p")
             {
-                foreach (Preset preset in presets)
-                {
-                    if (preset.Name == e.Args[i + 1])
-                    {
-                        if (ConversionManager.Instance.ConvertFile(preset))
-                        {
-                            Current.Shutdown();
-                        }
-                    }
-                }
+                Console.WriteLine("Preset Detected");
+                ConvertPreset(e,i);
+                presetDetected = true;
+                
             }
         }
-        
+
+        if (presetDetected) return;
         if (e.Args.Length > 0)
         {
             MainWindow mainWindow = new MainWindow();
@@ -54,7 +46,49 @@ public partial class App
         }
     }
 
-    
+    public async void ConvertPreset(StartupEventArgs e, int i)
+    {
+        ConversionWindow conversionWindow = new ConversionWindow();
+        conversionWindow.Show();
+        conversionWindow.convertingPreset = true;
+        string jsonText = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Presets.json"));
+        List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(jsonText);
+        
+        foreach (Preset preset in presets)
+        {
+            if (preset.Name == e.Args[i + 1])
+            {
+                
+                IProgress<String> progress = new Progress<String>(message =>
+                {
+                    conversionWindow.updateProgress(message,ConversionManager.Instance.GetDuration());
+                });
+
+                bool completionStatus = false;
+
+                try
+                {
+                    await Task.Run(() =>
+                        completionStatus = ConversionManager.Instance.ConvertFile(ConversionManager.Instance.CreateArgs(preset), progress,
+                            ConversionManager.Instance.CancellationTokenSource.Token));
+                }
+                catch (OperationCanceledException exception)
+                {
+                    Console.WriteLine("cancelled");
+                }
+                catch (Exception exception)
+                {
+                    conversionWindow.Close();
+                    Alert alert = new Alert("Conversion Error", exception.Message);
+                    alert.Show();
+                }
+                finally
+                {
+                    Application.Current.Shutdown();
+                }
+            }
+        }
+    }
     
     
 }

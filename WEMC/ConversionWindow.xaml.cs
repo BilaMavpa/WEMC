@@ -1,29 +1,32 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Threading;
+﻿using System.Windows;
 
 namespace WEMC;
 
 public partial class ConversionWindow : Window
 {
+    public bool convertingPreset = false;
     public ConversionWindow()
     {
         InitializeComponent();
     }
 
-    public Action updateProgress(string message)
+    public void updateProgress(string message,string duration)
     {
-        ProgressText.Text = message;
-        return Close;
-    }
+        double progress = TimeSpan.Parse(
+                message.Substring(message.IndexOf("time=") + 5, 8)).TotalSeconds
+            / TimeSpan.Parse(duration).TotalSeconds * 100;
+        ProgressBar.Value = progress;
 
-    public Dispatcher getCurrentDispatcher()
-    {
-        return Dispatcher.CurrentDispatcher;
+        ProgressText.Text = message;
     }
+    
     private void StopRender(object sender, RoutedEventArgs e)
     {
         ConversionManager.Instance.CancellationTokenSource.Cancel();
-        Close();
+        if (!convertingPreset)
+        {
+           Close();
+        }
     }
+    
 }

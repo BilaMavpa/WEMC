@@ -63,17 +63,8 @@ public class ConversionManager
 
     }
 
-    public bool ConvertFile(ConversionArgs ca, IProgress<string> progress,CancellationToken cancellationToken)
+    public bool ConvertFile(string arguments, IProgress<string> progress,CancellationToken cancellationToken)
     {
-        Console.WriteLine(_ffmpegPath);
-        string arguments = $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
-            $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
-            $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
-            $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
-            " -b:a 48k " +
-            $"{(ca.UseSize ? " -b:v " +
-            ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
-            $" \"{ca.Name + ca.OutputFormat}\"";
         
         Console.WriteLine("args: " + arguments);
         
@@ -125,11 +116,21 @@ public class ConversionManager
         
         return true;
     }
-    
-    public bool ConvertFile(Preset preset)
+
+    public string CreateArgs(ConversionArgs ca)
+    {
+        return $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
+               $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
+               $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
+               $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
+               " -b:a 48k " +
+               $"{(ca.UseSize ? " -b:v " +
+                                ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
+               $" \"{ca.Name + ca.OutputFormat}\"";
+    }
+    public string CreateArgs(Preset preset)
     {
         string arguments;
-        
         if (preset.Name.Equals("merge all audio"))
         {
             arguments = $"-i \"{FileName}\" " + GetArgsForMergingAllAudio() + " -c:v copy \"converted " + fileName + "\"";
@@ -137,30 +138,11 @@ public class ConversionManager
         else
         {
             arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")}" +
-                               $"{(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " +
-                               string.Join(" ", preset.Args) +
-                               $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
+                        $"{(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " +
+                        string.Join(" ", preset.Args) +
+                        $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
-        Console.WriteLine("args: " + arguments);
-            
-        ProcessStartInfo ffmpeg = new ProcessStartInfo
-        {
-            CreateNoWindow = false,
-            UseShellExecute = false,
-            FileName = _ffmpegPath,
-            Arguments = arguments,
-            RedirectStandardOutput = true,
-            WorkingDirectory =  FilePath
-        };
-            
-        using (Process process = new Process())
-        {
-            process.StartInfo = ffmpeg;
-            process.Start();
-            process.WaitForExit();
-        }
-            
-        return true;
+        return arguments;
     }
 
     private int GetAudioTrackAmount()
@@ -221,5 +203,27 @@ public class ConversionManager
         }
         return args;
     }
-    
+
+    public string GetDuration()
+    {
+        string fileDuration;
+        ProcessStartInfo ffprobe = new ProcessStartInfo
+        {
+            CreateNoWindow = false,
+            UseShellExecute = false,
+            FileName = _ffprobePath,
+            Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal \"{ConversionManager.Instance.FileName}\"",
+            RedirectStandardOutput = true,
+            WorkingDirectory = ConversionManager.Instance.FilePath
+        };
+            
+        using (Process process = new Process())
+        {
+            process.StartInfo = ffprobe;
+            process.Start();
+            fileDuration = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+        }
+        return "0" + fileDuration[..7];
+    }
 }
