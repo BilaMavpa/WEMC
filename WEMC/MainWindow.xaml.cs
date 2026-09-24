@@ -30,7 +30,7 @@ public partial class MainWindow : Window
         NameInput.Text = Path.GetFileNameWithoutExtension(ConversionManager.Instance.FileName);
     }
 
-    private void ConvertEvent(object sender, RoutedEventArgs e)
+    private async void ConvertEvent(object sender, RoutedEventArgs e)
     {
         ConversionArgs ca = new ConversionArgs();
         List<string> args = new List<string>();
@@ -72,7 +72,37 @@ public partial class MainWindow : Window
         ca.Hwaccel = HwaccelComboBox.SelectedValue.ToString();
         ca.UseSize = _isSizeActive;
         ca.Size = float.Parse(SizeInput.Text);
-        if (ConversionManager.Instance.ConvertFile(ca))
+        ConversionWindow conversionWindow = new ConversionWindow();
+        conversionWindow.Show();
+        IProgress<String> progress = new Progress<String>(message =>
+        {
+            conversionWindow.updateProgress(message);
+        });
+
+        bool completionStatus = false;
+
+        try
+        {
+            await Task.Run(() =>
+                completionStatus = ConversionManager.Instance.ConvertFile(ca, progress,
+                    ConversionManager.Instance.CancellationTokenSource.Token));
+        }
+        catch (OperationCanceledException exception)
+        {
+            Console.WriteLine("cancelled");
+        }
+        catch (Exception exception)
+        {
+            conversionWindow.Close();
+            Alert alert = new Alert("Conversion Error", exception.Message);
+            alert.Show();
+        }
+        finally
+        {
+            ConversionManager.Instance.CancellationTokenSource = new CancellationTokenSource();
+        }
+        
+        if (completionStatus)
         {
             Application.Current.Shutdown();
         }

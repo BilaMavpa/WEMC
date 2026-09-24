@@ -8,6 +8,7 @@ public class ConversionManager
 {
     private static ConversionManager? _instance = null;
     private static readonly Lock Lock = new Lock();
+    public CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
     
     private ConversionManager()
     {
@@ -62,7 +63,7 @@ public class ConversionManager
 
     }
 
-    public bool ConvertFile(ConversionArgs ca)
+    public bool ConvertFile(ConversionArgs ca, IProgress<string> progress,CancellationToken cancellationToken)
     {
         Console.WriteLine(_ffmpegPath);
         string arguments = $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
@@ -83,6 +84,8 @@ public class ConversionManager
             FileName = _ffmpegPath,
             Arguments = arguments,
             RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
             WorkingDirectory =  FilePath
         };
         
@@ -90,6 +93,33 @@ public class ConversionManager
         {
             process.StartInfo = ffmpeg;
             process.Start();
+            while (!process.StandardError.EndOfStream)
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch (OperationCanceledException e)
+                {
+                    process.Kill();
+                    throw;
+                }
+                
+                string line = process.StandardError.ReadLine();
+                if (line.Contains("Error"))
+                {
+                    process.Kill();
+                    throw new Exception(line);
+                }
+                if (line.Contains("frame="))
+                {
+                    progress.Report(line);
+                }
+                else
+                {
+                    Console.WriteLine(line);
+                }
+            }
             process.WaitForExit();
         }
         
