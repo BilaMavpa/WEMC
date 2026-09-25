@@ -72,17 +72,18 @@ public partial class MainWindow : Window
         conversionWindow.Show();
         IProgress<String> progress = new Progress<String>(message =>
         {
-            conversionWindow.updateProgress(message,
+            conversionWindow.UpdateProgress(message,
                 _isDurationActive ? DurationInput.Text : ConversionManager.Instance.GetDuration());
         });
 
         bool completionStatus = false;
         Hide();
+        const bool showProgress = true;
         try
         {
             await Task.Run(() =>
                 completionStatus = ConversionManager.Instance.ConvertFile(ConversionManager.Instance.CreateArgs(ca),
-                    progress, ConversionManager.Instance.CancellationTokenSource.Token));
+                    progress, ConversionManager.Instance.CancellationTokenSource.Token,showProgress));
         }
         catch (OperationCanceledException exception)
         {

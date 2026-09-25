@@ -63,11 +63,11 @@ public class ConversionManager
 
     }
 
-    public bool ConvertFile(string arguments, IProgress<string> progress,CancellationToken cancellationToken)
+    public bool ConvertFile(string arguments, IProgress<string> progress,
+        CancellationToken cancellationToken, bool showProgress)
     {
         
         Console.WriteLine("args: " + arguments);
-        
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
             CreateNoWindow = false,
@@ -84,31 +84,34 @@ public class ConversionManager
         {
             process.StartInfo = ffmpeg;
             process.Start();
-            while (!process.StandardError.EndOfStream)
+            if (showProgress)
             {
-                try
+                while (!process.StandardError.EndOfStream)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-                catch (OperationCanceledException e)
-                {
-                    process.Kill();
-                    throw;
-                }
-                
-                string line = process.StandardError.ReadLine();
-                if (line.Contains("Error"))
-                {
-                    process.Kill();
-                    throw new Exception(line);
-                }
-                if (line.Contains("frame="))
-                {
-                    progress.Report(line);
-                }
-                else
-                {
-                    Console.WriteLine(line);
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                    catch (OperationCanceledException e)
+                    {
+                        process.Kill();
+                        throw;
+                    }
+                    
+                    string line = process.StandardError.ReadLine();
+                    if (line.Contains("Error"))
+                    {
+                        process.Kill();
+                        throw new Exception(line);
+                    }
+                    if (line.Contains("frame="))
+                    {
+                        progress.Report(line);
+                    }
+                    else
+                    {
+                        Console.WriteLine(line);
+                    }
                 }
             }
             process.WaitForExit();
@@ -138,8 +141,9 @@ public class ConversionManager
         else
         {
             arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")}" +
-                        $"{(!preset.FirstArg.Equals("") ? preset.FirstArg + " " : "")} -i \"{FileName}\" " +
-                        string.Join(" ", preset.Args) +
+                        $"{(!preset.FirstArg.Equals("") ? " " + preset.FirstArg + " " : "")} -i \"{FileName}\" " +
+                        string.Join(" ", preset.Args) + " " +
+                        GetArgsForKeepingAllAudio() +
                         $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
         return arguments;

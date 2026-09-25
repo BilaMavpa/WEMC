@@ -7,5 +7,5 @@ public class Preset
     public string FirstArg { get; set; }
     public string Hwaccel { get; set; }
     public string[] Args { get; set; }
-    
+    public bool ShowProgress { get; set; }
 }

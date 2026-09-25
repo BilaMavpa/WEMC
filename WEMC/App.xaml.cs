@@ -46,11 +46,8 @@ public partial class App
         }
     }
 
-    public async void ConvertPreset(StartupEventArgs e, int i)
+    private async void ConvertPreset(StartupEventArgs e, int i)
     {
-        ConversionWindow conversionWindow = new ConversionWindow();
-        conversionWindow.Show();
-        conversionWindow.convertingPreset = true;
         string jsonText = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Presets.json"));
         List<Preset> presets = JsonSerializer.Deserialize<List<Preset>>(jsonText);
         
@@ -59,18 +56,25 @@ public partial class App
             if (preset.Name == e.Args[i + 1])
             {
                 
+                bool showProgress = preset.ShowProgress;
+                ConversionWindow conversionWindow = new ConversionWindow();
+                if (showProgress)
+                {
+                    conversionWindow.Show();
+                    conversionWindow.ConvertingPreset = true;
+                }
                 IProgress<String> progress = new Progress<String>(message =>
                 {
-                    conversionWindow.updateProgress(message,ConversionManager.Instance.GetDuration());
+                    conversionWindow.UpdateProgress(message,ConversionManager.Instance.GetDuration());
                 });
-
+                
                 bool completionStatus = false;
 
                 try
                 {
                     await Task.Run(() =>
                         completionStatus = ConversionManager.Instance.ConvertFile(ConversionManager.Instance.CreateArgs(preset), progress,
-                            ConversionManager.Instance.CancellationTokenSource.Token));
+                            ConversionManager.Instance.CancellationTokenSource.Token,showProgress));
                 }
                 catch (OperationCanceledException exception)
                 {

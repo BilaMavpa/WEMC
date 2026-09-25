@@ -3,6 +3,7 @@
   "Format": ".webp",
   "Hwaccel": "cuda",
   "FirstArg": "-framerate 1/2",
+  "ShowProgress": false,
   "Args": [
     "-loop 0",
     "-frames 2",
@@ -17,10 +18,11 @@
   "Format": ".mp4",
   "Hwaccel": "cuda",
   "FirstArg": "",
+  "ShowProgress": true,
   "Args": [
     "-c:v h264_nvenc",
     "-b:v 10M",
-    "-map 0:v -map 0:a:0 -map 0:a:1"
+    "-map 0:v"
   ]
 }, 
 {
@@ -28,5 +30,6 @@
   "Format": "same",
   "Hwaccel": "none",
   "FirstArg": "",
+  "ShowProgress": true,
   "Args": []
 }]
