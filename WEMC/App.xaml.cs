@@ -73,7 +73,8 @@ public partial class App
                 try
                 {
                     await Task.Run(() =>
-                        completionStatus = ConversionManager.Instance.ConvertFile(ConversionManager.Instance.CreateArgs(preset), progress,
+                        completionStatus = ConversionManager.Instance.ConvertFile(
+                            ConversionManager.Instance.CreateArgs(preset), progress,
                             ConversionManager.Instance.CancellationTokenSource.Token,showProgress));
                 }
                 catch (OperationCanceledException exception)

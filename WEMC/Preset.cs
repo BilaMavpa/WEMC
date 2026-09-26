@@ -8,4 +8,5 @@ public class Preset
     public string Hwaccel { get; set; }
     public string[] Args { get; set; }
     public bool ShowProgress { get; set; }
+    public bool KeepAudio { get; set; }
 }

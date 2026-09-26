@@ -4,6 +4,7 @@
   "Hwaccel": "cuda",
   "FirstArg": "-framerate 1/2",
   "ShowProgress": false,
+  "KeepAudio": false,
   "Args": [
     "-loop 0",
     "-frames 2",
@@ -19,6 +20,7 @@
   "Hwaccel": "cuda",
   "FirstArg": "",
   "ShowProgress": true,
+  "KeepAudio": true,
   "Args": [
     "-c:v h264_nvenc",
     "-b:v 10M",
@@ -31,5 +33,6 @@
   "Hwaccel": "none",
   "FirstArg": "",
   "ShowProgress": true,
+  "KeepAudio": false,
   "Args": []
 }]

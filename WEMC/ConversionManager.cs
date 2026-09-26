@@ -143,7 +143,7 @@ public class ConversionManager
             arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")}" +
                         $"{(!preset.FirstArg.Equals("") ? " " + preset.FirstArg + " " : "")} -i \"{FileName}\" " +
                         string.Join(" ", preset.Args) + " " +
-                        GetArgsForKeepingAllAudio() +
+                        $"{(preset.KeepAudio ? GetArgsForKeepingAllAudio() : "")}" +
                         $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
         return arguments;
