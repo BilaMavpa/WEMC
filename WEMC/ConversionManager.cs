@@ -128,7 +128,8 @@ public class ConversionManager
                $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
                " -b:a 48k " +
                $"{(ca.UseSize ? " -b:v " +
-                                ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : "")}" +
+                                ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : 
+                   " -b:v " + GetBitrate())}" +
                $" \"{ca.Name + ca.OutputFormat}\"";
     }
     public string CreateArgs(Preset preset)
@@ -142,8 +143,9 @@ public class ConversionManager
         {
             arguments = $"{(!preset.Hwaccel.Equals("") ? "-hwaccel " + preset.Hwaccel : "")}" +
                         $"{(!preset.FirstArg.Equals("") ? " " + preset.FirstArg + " " : "")} -i \"{FileName}\" " +
-                        string.Join(" ", preset.Args) + " " +
+                        string.Join(" ", preset.Args) + " " +   
                         $"{(preset.KeepAudio ? GetArgsForKeepingAllAudio() : "")}" +
+                        $"{(preset.KeepBitrate ? " -b:v " + GetBitrate() : "")}" +
                         $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
         return arguments;
@@ -216,9 +218,9 @@ public class ConversionManager
             CreateNoWindow = false,
             UseShellExecute = false,
             FileName = _ffprobePath,
-            Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal \"{ConversionManager.Instance.FileName}\"",
+            Arguments = $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal \"{FileName}\"",
             RedirectStandardOutput = true,
-            WorkingDirectory = ConversionManager.Instance.FilePath
+            WorkingDirectory = FilePath
         };
             
         using (Process process = new Process())
@@ -229,5 +231,29 @@ public class ConversionManager
             process.WaitForExit();
         }
         return "0" + fileDuration[..7];
+    }
+
+    public string GetBitrate()
+    {
+        string bitrate;
+        ProcessStartInfo ffprobe = new ProcessStartInfo
+        {
+            CreateNoWindow = false,
+            UseShellExecute = false,
+            FileName = _ffprobePath,
+            Arguments = $"-v quiet -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 \"{FileName}\"",
+            RedirectStandardOutput = true,
+            WorkingDirectory = FilePath
+        };
+            
+        using (Process process = new Process())
+        {
+            process.StartInfo = ffprobe;
+            process.Start();
+            bitrate = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+        }
+
+        return (int.Parse(bitrate[9..]) / 1000) + "k";
     }
 }

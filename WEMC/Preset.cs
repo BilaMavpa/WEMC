@@ -9,4 +9,5 @@ public class Preset
     public string[] Args { get; set; }
     public bool ShowProgress { get; set; }
     public bool KeepAudio { get; set; }
+    public bool KeepBitrate { get; set; }
 }

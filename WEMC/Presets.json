@@ -5,6 +5,7 @@
   "FirstArg": "-framerate 1/2",
   "ShowProgress": false,
   "KeepAudio": false,
+  "KeepBitrate": false,
   "Args": [
     "-loop 0",
     "-frames 2",
@@ -21,10 +22,9 @@
   "FirstArg": "",
   "ShowProgress": true,
   "KeepAudio": true,
+  "KeepBitrate": true,
   "Args": [
-    "-c:v h264_nvenc",
-    "-b:v 10M",
-    "-map 0:v"
+    "-c:v h264_nvenc"
   ]
 }, 
 {
@@ -34,5 +34,6 @@
   "FirstArg": "",
   "ShowProgress": true,
   "KeepAudio": false,
+  "KeepBitrate": false,
   "Args": []
 }]
