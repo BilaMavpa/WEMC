@@ -66,7 +66,6 @@ public class ConversionManager
     public bool ConvertFile(string arguments, IProgress<string> progress,
         CancellationToken cancellationToken, bool showProgress)
     {
-        
         Console.WriteLine("args: " + arguments);
         ProcessStartInfo ffmpeg = new ProcessStartInfo
         {
@@ -122,14 +121,15 @@ public class ConversionManager
 
     public string CreateArgs(ConversionArgs ca)
     {
+        double useSizeBitrate = (ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds -
+                                (GetAudioTrackAmount() * double.Parse(GetAudioBitrate().TrimEnd("k")));
         return $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
                $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
                $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
                $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
-               " -b:a 48k " +
-               $"{(ca.UseSize ? " -b:v " +
-                                ((ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds - 128) + "k " : 
-                   " -b:v " + GetBitrate())}" +
+               $"{(ca.UseSize ? " -b:v " + useSizeBitrate.ToString("0.000") + "k " : 
+                   " -b:v " + GetVideoBitrate())}" +
+               $" -b:a {GetAudioBitrate()}" +
                $" \"{ca.Name + ca.OutputFormat}\"";
     }
     public string CreateArgs(Preset preset)
@@ -145,7 +145,8 @@ public class ConversionManager
                         $"{(!preset.FirstArg.Equals("") ? " " + preset.FirstArg + " " : "")} -i \"{FileName}\" " +
                         string.Join(" ", preset.Args) + " " +   
                         $"{(preset.KeepAudio ? GetArgsForKeepingAllAudio() : "")}" +
-                        $"{(preset.KeepBitrate ? " -b:v " + GetBitrate() : "")}" +
+                        $"{(preset.KeepBitrate ? " -b:v " + GetVideoBitrate() : "")}" +
+                        $" -b:a {GetAudioBitrate()}" +
                         $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
         return arguments;
@@ -233,7 +234,7 @@ public class ConversionManager
         return "0" + fileDuration[..7];
     }
 
-    public string GetBitrate()
+    public string GetVideoBitrate()
     {
         string bitrate;
         ProcessStartInfo ffprobe = new ProcessStartInfo
@@ -242,6 +243,29 @@ public class ConversionManager
             UseShellExecute = false,
             FileName = _ffprobePath,
             Arguments = $"-v quiet -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 \"{FileName}\"",
+            RedirectStandardOutput = true,
+            WorkingDirectory = FilePath
+        };
+            
+        using (Process process = new Process())
+        {
+            process.StartInfo = ffprobe;
+            process.Start();
+            bitrate = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+        }
+
+        return (int.Parse(bitrate[9..]) / 1000) + "k";
+    }
+    public string GetAudioBitrate()
+    {
+        string bitrate;
+        ProcessStartInfo ffprobe = new ProcessStartInfo
+        {
+            CreateNoWindow = false,
+            UseShellExecute = false,
+            FileName = _ffprobePath,
+            Arguments = $"-v quiet -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1 \"{FileName}\"",
             RedirectStandardOutput = true,
             WorkingDirectory = FilePath
         };
