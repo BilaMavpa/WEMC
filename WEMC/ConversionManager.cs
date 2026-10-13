@@ -121,15 +121,46 @@ public class ConversionManager
 
     public string CreateArgs(ConversionArgs ca)
     {
-        double useSizeBitrate = (ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds -
-                                (GetAudioTrackAmount() * double.Parse(GetAudioBitrate().TrimEnd("k")));
+        int trackAmount = GetAudioTrackAmount();
+        string audioBitrate = GetAudioBitrate();
+        string videoBitrate = GetVideoBitrate();
+        string trackArg = "";
+        
+        switch (ca.TrackOption)
+        {
+            case "Only Keep 1":
+                trackAmount = 1;
+                break;
+            case "Merge 1 + 2":
+                trackArg = "-filter_complex \"[0:1][0:2]amerge=inputs=2[a]\" -ac 2 -map 0:v -map \"[a]\"";
+                trackAmount = 1;
+                break;
+            case "Merge all":
+                trackArg = GetArgsForMergingAllAudio();
+                trackAmount = 1;
+                break;
+            case "Keep same":
+                trackArg = GetArgsForKeepingAllAudio();
+                break;
+            case "None":
+                trackArg = "-an";
+                trackAmount = 0;
+                break;
+        }
+        
+        double useSizeBitrate = ca.UseSize ? 
+            (ca.Size * 8192) / TimeSpan.Parse(ca.Duration).TotalSeconds -
+            (trackAmount * double.Parse(audioBitrate.TrimEnd("k")))
+            : 0;
+        
         return $"{(!ca.Hwaccel.Equals("none") ? "-hwaccel " + ca.Hwaccel + " " : "")}" +
                $"{(!ca.StartTime.Equals("") ? $"-ss \"{ca.StartTime}\" " : "")}" +
                $"{(!ca.Duration.Equals("") ? $"-t \"{ca.Duration}\" " : "")}" +
                $"-i \"{FileName}\" " + string.Join(" ", ca.Args) +
+               $" {trackArg}" +
                $"{(ca.UseSize ? " -b:v " + useSizeBitrate.ToString("0.000") + "k " : 
-                   " -b:v " + GetVideoBitrate())}" +
-               $" -b:a {GetAudioBitrate()}" +
+                   " -b:v " + videoBitrate)}" +
+               $" {(trackAmount == 0 ? "" : $" -b:a {audioBitrate}")}" +
                $" \"{ca.Name + ca.OutputFormat}\"";
     }
     public string CreateArgs(Preset preset)

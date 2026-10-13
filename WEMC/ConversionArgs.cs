@@ -9,6 +9,7 @@ public class ConversionArgs
     public string Hwaccel { get; set; }
     public bool UseSize { get; set; }
     public float Size { get; set; }
+    public string TrackOption { get; set; }
     public string[] Args { get; set; }
     
 }
