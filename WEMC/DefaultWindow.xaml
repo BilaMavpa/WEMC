@@ -19,8 +19,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Name="TextBlock" Text="DefaultWindow" FontSize="20" TextAlignment="Center" VerticalAlignment="Bottom"></TextBlock>
         <Button Name="ApplyRegistryButton" Grid.Row="1" Width="300" FontSize="40" Content="Apply Registry" VerticalAlignment="Center" Click="ApplyButtonAction"  IsEnabled="False"></Button>
-        <Button Name="ApplyPresetsButton" Grid.Row="2" Width="300" FontSize="40" Content="Apply Presets" VerticalAlignment="Center" Click="ApplyPresetsButtonAction" IsEnabled="False"></Button>
-        <Button Name="RemoveRegistryButton" Grid.Row="3" Width="300" FontSize="40" Content="Remove Registry" VerticalAlignment="Center" Click="RemoveButtonAction" IsEnabled="False"></Button>
+        <Button Name="RemoveRegistryButton" Grid.Row="2" Width="300" FontSize="40" Content="Remove Registry" VerticalAlignment="Center" Click="RemoveButtonAction" IsEnabled="False"></Button>
 
     </Grid>
 </Window>

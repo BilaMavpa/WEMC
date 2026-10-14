@@ -14,7 +14,6 @@ public partial class DefaultWindow : Window
         if (IsRunningAsAdmin())
         {
             ApplyRegistryButton.IsEnabled = true;
-            ApplyPresetsButton.IsEnabled = true;
             RemoveRegistryButton.IsEnabled = true;
             TextBlock.Text = "";
         }
@@ -36,15 +35,19 @@ public partial class DefaultWindow : Window
 
     private void ApplyButtonAction(object sender, RoutedEventArgs routedEventArgs)
     {
-        ApplyRegistry();
+        try
+        {
+            ApplyRegistry();
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show("Failed to apply registry entries","Error",
+                MessageBoxButton.OK,MessageBoxImage.None);
+        }
     }
     private void RemoveButtonAction(object sender, RoutedEventArgs routedEventArgs)
     {
         RemoveRegistry();
-    }
-    private void ApplyPresetsButtonAction(object sender, RoutedEventArgs routedEventArgs)
-    {
-        ApplyPresets();
     }
 
     private void RemoveRegistry()
@@ -53,8 +56,7 @@ public partial class DefaultWindow : Window
         rootKey.DeleteSubKeyTree("WEMC");
         rootKey.Close();
         
-        Alert alert = new Alert("Success","Registry entries successfully removed");
-        alert.Show();
+        MessageBox.Show("Registry entries successfully removed","Success",MessageBoxButton.OK,MessageBoxImage.None);
     }
     private void ApplyRegistry()
     {
@@ -80,8 +82,9 @@ public partial class DefaultWindow : Window
         RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction\command", true);
         mainActionCommandKey.SetValue("", $"\"{System.Environment.ProcessPath}\" -dir \"%1\"");
         
-        Alert alert = new Alert("Success","Registry entries successfully created");
-        alert.Show();
+        ApplyPresets();
+        
+        MessageBox.Show("Registry entries successfully created","Success",MessageBoxButton.OK,MessageBoxImage.None);
     }
     private void ApplyPresets()
     {
@@ -116,7 +119,5 @@ public partial class DefaultWindow : Window
         RegistryKey mainActionCommandKey = Registry.ClassesRoot.OpenSubKey(@"\*\shell\WEMC\shell\mainAction\command", true);
         mainActionCommandKey.SetValue("", $"\"{System.Environment.ProcessPath}\" -dir \"%1\"");
         
-        Alert alert = new Alert("Success","Registry entries for presets successfully created");
-        alert.Show();
     }
 }

@@ -76,8 +76,7 @@ public partial class MainWindow : Window
         catch (Exception exception)
         {
             conversionWindow.Close();
-            Alert alert = new Alert("Conversion Error", exception.Message);
-            alert.Show();
+            MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.None);
         }
         finally
         {

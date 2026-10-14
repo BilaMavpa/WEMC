@@ -84,8 +84,8 @@ public partial class App
                 catch (Exception exception)
                 {
                     conversionWindow.Close();
-                    Alert alert = new Alert("Conversion Error", exception.Message);
-                    alert.Show();
+                    MessageBox.Show(exception.Message,"Conversion Error",
+                        MessageBoxButton.OK,MessageBoxImage.None);
                 }
                 finally
                 {
