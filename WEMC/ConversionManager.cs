@@ -168,7 +168,10 @@ public class ConversionManager
         string arguments;
         if (preset.Name.Equals("merge all audio"))
         {
-            arguments = $"-i \"{FileName}\" " + GetArgsForMergingAllAudio() + " -c:v copy \"converted " + fileName + "\"";
+            arguments = $"-i \"{FileName}\" " +
+                        GetArgsForMergingAllAudio() + " " +
+                        string.Join(" ", preset.Args) + " " +   
+                        " -c:v copy \"converted " + fileName + "\"";
         }
         else
         {

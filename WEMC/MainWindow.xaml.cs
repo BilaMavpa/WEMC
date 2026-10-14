@@ -30,6 +30,21 @@ public partial class MainWindow : Window
     {
         ConversionArgs ca = new ConversionArgs();
         List<string> args = new List<string>();
+        
+        if (File.Exists(Path.Combine(ConversionManager.Instance.FilePath,
+                NameInput.Text + FormatInput.Text)))
+        {
+            if (MessageBox.Show("File already exists. Overwrite?", "Warning",
+                    MessageBoxButton.YesNo,MessageBoxImage.None ) == MessageBoxResult.Yes)
+            {
+                args.Add("-y");
+            }
+            else
+            {
+                return;
+            }
+        }
+        
         ca.StartTime = "";
         ca.Duration = "";
         if (_isStartTimeActive)

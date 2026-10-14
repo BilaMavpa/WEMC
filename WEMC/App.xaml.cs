@@ -55,6 +55,21 @@ public partial class App
         {
             if (preset.Name == e.Args[i + 1])
             {
+                string filepath = Path.Combine(ConversionManager.Instance.FilePath, "converted " +
+                    $"{(preset.Format.Equals("same") ? ConversionManager.Instance.FileName :
+                        Path.GetFileNameWithoutExtension(ConversionManager.Instance.FileName) + preset.Format)}");
+                if (File.Exists(filepath))
+                {
+                    if (MessageBox.Show("File already exists. Overwrite?", "Warning",
+                            MessageBoxButton.YesNo,MessageBoxImage.None ) == MessageBoxResult.Yes)
+                    {
+                        preset.Args.Add("-y");
+                    }
+                    else
+                    {
+                        Application.Current.Shutdown();
+                    }
+                }
                 
                 bool showProgress = preset.ShowProgress;
                 ConversionWindow conversionWindow = new ConversionWindow();
