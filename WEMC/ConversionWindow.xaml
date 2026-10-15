@@ -20,9 +20,9 @@
                 <ColumnDefinition Width=".6*"></ColumnDefinition>
                 <ColumnDefinition Width=".2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="ElapsedTimeText" Grid.Column="0" Text="00:00" TextAlignment="Right" VerticalAlignment="Center" FontSize="20" Margin="0,0,10,0"></TextBlock>
+            <TextBlock Name="ElapsedTimeText" Grid.Column="0" Text="00:00:00" TextAlignment="Right" VerticalAlignment="Center" FontSize="18" Margin="0,0,10,0"></TextBlock>
             <ProgressBar Grid.Column="1" Name="ProgressBar" ></ProgressBar>
-            <TextBlock Name="EtaTimeText" Grid.Column="2" Text="ETA: 00:00" TextAlignment="Left" VerticalAlignment="Center" FontSize="20" Margin="10,0,0,0"></TextBlock>
+            <TextBlock Name="EtaTimeText" Grid.Column="2" Text="ETA: 00:00:00" TextAlignment="Left" VerticalAlignment="Center" FontSize="18" Margin="10,0,0,0"></TextBlock>
         </Grid>
         <TextBlock  Grid.Row="2" Name="ProgressText" VerticalAlignment="Center" FontSize="15" TextWrapping="Wrap"
                    Text="frame=    0 fps=0.0 q=-0.0 size=       0KiB time=00:00:00.00 bitrate=  00.0kbits/s speed=0.000x elapsed=0:00:00.00">

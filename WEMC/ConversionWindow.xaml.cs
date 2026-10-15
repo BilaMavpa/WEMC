@@ -48,11 +48,16 @@ public partial class ConversionWindow : Window
                 }
                 
                 double remainingTime = remainingDuration / _lastSpeeds.Max();
-                EtaTimeText.Text = "ETA: " + TimeSpan.FromSeconds(remainingTime).ToString(@"mm\:ss") ;
+                EtaTimeText.Text = $"ETA: " + (remainingTime < 3600 ? 
+                    TimeSpan.FromSeconds(remainingTime).ToString(@"mm\:ss") :
+                    TimeSpan.FromSeconds(remainingTime).ToString(@"hh\:mm\:ss")) ;
             }
             _updateNum++;
             _lastProgress = progress;
-            ElapsedTimeText.Text = _stopwatch.Elapsed.ToString(@"mm\:ss");
+            
+            ElapsedTimeText.Text = (_stopwatch.Elapsed.TotalSeconds < 3600 ? 
+                _stopwatch.Elapsed.ToString(@"mm\:ss") : 
+                _stopwatch.Elapsed.ToString(@"hh\:mm\:ss"));
 
             ProgressText.Text = message;
         }
