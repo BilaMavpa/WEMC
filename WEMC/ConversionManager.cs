@@ -9,7 +9,6 @@ public class ConversionManager
     private static ConversionManager? _instance = null;
     private static readonly Lock Lock = new Lock();
     public CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-    
     private ConversionManager()
     {
         
@@ -165,6 +164,7 @@ public class ConversionManager
     }
     public string CreateArgs(Preset preset)
     {
+        string audioBitrate = GetAudioBitrate();
         string arguments;
         if (preset.Name.Equals("merge all audio"))
         {
@@ -180,7 +180,7 @@ public class ConversionManager
                         string.Join(" ", preset.Args) + " " +   
                         $"{(preset.KeepAudio ? GetArgsForKeepingAllAudio() : "")}" +
                         $"{(preset.KeepBitrate ? " -b:v " + GetVideoBitrate() : "")}" +
-                        $" -b:a {GetAudioBitrate()}" +
+                        $"{(audioBitrate.Equals("-1") ? "" : " -b:a " + audioBitrate)}" +
                         $" \"converted {Path.GetFileNameWithoutExtension(FileName) + preset.Format}\"";
         }
         return arguments;
@@ -312,6 +312,8 @@ public class ConversionManager
             process.WaitForExit();
         }
 
+        if (bitrate.Length == 0)
+            return "-1";
         return (int.Parse(bitrate[9..]) / 1000) + "k";
     }
 }
